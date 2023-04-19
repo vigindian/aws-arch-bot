@@ -45,6 +45,8 @@ Script: aws-arch-bot-st.py
 
 ## Pre-requisites
 - This has been tested with Python 3.10 and should work with >=3.8
+- Create a file localsecrets.py with your openai api-key in the format
+```openaikey="sk-xxxx"```
 - rustc (In Linux, install latest version with ```curl https://sh.rustup.rs -sSf | sh```)
 - gfortran (Debian: ```sudo apt-get install gfortran```)
 - lzma (Debian: ```sudo apt-get install liblzma-dev```)

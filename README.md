@@ -43,6 +43,10 @@ Script: aws-arch-bot-st.py
 - ```pip install -r requirements.txt```
 - ```streamlit run aws-arch-bot-st.py```
 
+### Sample
+
+![plot](./image-aws-arch-bot-st.png)
+
 ## Pre-requisites
 - This has been tested with Python 3.10 and should work with >=3.8
 - Create a file localsecrets.py with your openai api-key in the format

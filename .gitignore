@@ -1,0 +1,7 @@
+data.json
+debug.log
+localsecrets.py
+__pycache__
+orig-scraper.py
+*-demo.py
+sample.csv

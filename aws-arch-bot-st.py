@@ -1,4 +1,4 @@
-#!/usr/local/bin/python3.10
+#!/usr/bin/python3
 
 #########################################################################
 # AWS Architecture Bot:
@@ -120,7 +120,7 @@ def streamlit_sidebar() -> None:
         "The AWS Well-Architected Framework helps you understand the pros and cons of decisions you make while building systems on AWS. By using the Framework you will learn architectural best practices for designing and operating reliable, secure, efficient, cost-effective, and sustainable systems in the cloud."
     )
 
-#@st.cache_data
+@st.cache_data
 def load_data(fname):
     df = pd.read_csv(fname)
     return df

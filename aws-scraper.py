@@ -1,4 +1,4 @@
-#!/usr/local/bin/python3.10
+#!/usr/bin/python3
 
 from bs4 import BeautifulSoup
 import requests

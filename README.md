@@ -6,7 +6,7 @@ Go through given AWS Documentation, all its sub-pages, and create data-file in c
 
 ### Run
 - ```pip install -r requirements.txt```
-- ```./aws-scaper.py```
+- ```./aws-scraper.py```
 
 ### Output
 - data.csv
@@ -42,6 +42,7 @@ Script: aws-arch-bot-st.py
 ### Run
 - ```pip install -r requirements.txt```
 - ```streamlit run aws-arch-bot-st.py```
+- This should automatically open the streamlit application in your local machine' browser
 
 ### Sample
 

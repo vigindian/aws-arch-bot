@@ -5,3 +5,4 @@ __pycache__
 orig-scraper.py
 *-demo.py
 sample.csv
+*.backup

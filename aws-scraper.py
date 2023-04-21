@@ -10,9 +10,12 @@ import re #regex
 import tiktoken
 import openai
 import localsecrets
+import numpy as np
 #from openai.embeddings_utils import get_embedding
 
 openai.api_key = localsecrets.openaikey
+
+datafile = "data.csv"
 
 embedding_model = "text-embedding-ada-002"
 embedding_encoding = "cl100k_base"  # this the encoding for text-embedding-ada-002
@@ -32,6 +35,12 @@ dict_href_links = {}
 def get_urltext(url):
   r = requests.get(url)
   return r.text
+
+#split array into given parts
+def split_array(given_array: list, split_count:int):
+  #subarrays = np.array_split(given_array, split_count)
+  subarrays = np.array_split(np.char.strip(given_array), split_count) #remove leading and trailing whitespaces before the split
+  return subarrays
 
 #get all sub-links from given URL
 def get_links(url):
@@ -157,6 +166,7 @@ def get_page_details(url):
       text_list.append(td_clean_text)
 
   json_obj = {}
+  combined_json_array = []
   num_tokens = num_tokens_from_string(str(text_list), embedding_encoding)
   #ignore sections with less tokens, to retain only meaningful info; and enforce max-token-limit
   if num_tokens > min_tokens and num_tokens < max_tokens:
@@ -166,15 +176,31 @@ def get_page_details(url):
     json_obj["no_tokens"] = num_tokens
     #json_obj["embedding"] = get_embedding(text_list, engine=embedding_model) #uses openai-built-in
     json_obj["embedding"] = get_embedding(text_list, model=embedding_model) #custom function
+    return json_obj
 
-  #print(json_obj)
-  return json_obj
+  #if content too big, split them
+  elif num_tokens > max_tokens:
+    #subsections = split_list(text_list) #split array into 2
+    subsections = split_array(text_list, 12) #split array into given parts
+    for subsection in subsections:
+      newsection = []
+      #remove line breaks
+      for element in subsection:
+        newsection.append(element.strip())
+
+      subsection = newsection
+      num_tokens_subsection = num_tokens_from_string(str(subsection), embedding_encoding)
+      json_obj["url"] = url
+      json_obj["title"] = title
+      json_obj["sections"] = subsection
+      json_obj["no_tokens"] = num_tokens_subsection 
+      json_obj["embedding"] = get_embedding(subsection, model=embedding_model) #custom function
+      combined_json_array.append(json_obj.copy())
+
+  return combined_json_array
 
 #run only when executed in the main file and not when it is imported in some other file
 if __name__ == '__main__':
-
-  #alllinks=get_links(URL_AWS_WELL_ARCH)
-  #print(alllinks)
 
   #first-page
   jsonobj=get_page_details(URL_AWS_WELL_ARCH)
@@ -182,7 +208,7 @@ if __name__ == '__main__':
     print(jsonobj)
   if jsonobj:
     df = pd.json_normalize(jsonobj)
-    df.to_csv("data.csv", index=False, encoding="utf-8")
+    df.to_csv(datafile, index=False, encoding="utf-8")
 
   #subsequent-pages
   urlnext = URL_AWS_WELL_ARCH
@@ -192,12 +218,23 @@ if __name__ == '__main__':
     if debugMode:
         print(nextlink)
 
+    #all pages scraped
     if nextlink == None:
         counter = 0
     else:
-        jsonobj=get_page_details(nextlink)
-        if jsonobj:
-          df = pd.json_normalize(jsonobj)
-          df.to_csv("data.csv", mode="a", index=False, header=False, encoding="utf-8") #append-without-header
+        obj=get_page_details(nextlink)
+        if obj:
+          obj_type = type(obj)
+
+          #smaller size section output is in dict in one part
+          if isinstance(obj, dict):
+            jsonobj = obj
+            df = pd.json_normalize(jsonobj)
+            df.to_csv(datafile, mode="a", index=False, header=False, encoding="utf-8") #append-without-header
+          #bigger size section output is in list, separated into smaller parts
+          elif isinstance(obj, list):
+            for jsonobj in obj:
+              df = pd.json_normalize(jsonobj)
+              df.to_csv(datafile, mode="a", index=False, header=False, encoding="utf-8") #append-without-header
 
     urlnext = nextlink

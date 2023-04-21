@@ -34,7 +34,7 @@ def strings_ranked_by_relatedness(
     query: str,
     df: pd.DataFrame,
     relatedness_fn=lambda x, y: 1 - spatial.distance.cosine(x, y),
-    top_n: int = 100
+    top_n: int = 10
 ) -> tuple[list[str], list[float]]:
     """Returns a list of strings and relatednesses, sorted from most related to least."""
     query_embedding = get_embedding(query, engine = embedding_model)
@@ -62,6 +62,7 @@ def query_message(
 ) -> str:
     """Return a message for GPT, with relevant source texts pulled from a dataframe."""
     strings, relatednesses, reference_urls = strings_ranked_by_relatedness(query, df)
+    reference_urls = list(dict.fromkeys(reference_urls)) #remove duplicate urls
     introduction = 'Use the below content on the AWS Architecture to answer the subsequent question. If the answer cannot be found in the articles, write "I could not find an answer."'
     question = f"\n\nQuestion: {query}"
     message = introduction

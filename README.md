@@ -2,7 +2,9 @@
 ## AWS Documentation Scraper
 Script: aws-scraper.py
 
-Go through given AWS Documentation, all its sub-pages, and create data-file in csv format with embeddings
+### Script Details
+- Go through given AWS Documentation and all its sub-pages
+- create a data-file in csv format with num_tokens and embeddings for each section
 
 ### Run
 - ```pip install -r requirements.txt```
@@ -17,7 +19,7 @@ Script: aws-arch-bot.py
 ### Pre-requisites
 - pre-processed input file (AWS architecture sections) with embeddings
 
-### Script Details 
+### Script Details
 - takes a query
 - scans given content, from AWS Architecture sections
 - provides an answer based on the query and content
